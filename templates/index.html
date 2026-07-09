@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AeroMentor — GATE Aerospace AI Tutor</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- Marked (Markdown parser) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+<!-- ── Top Nav ──────────────────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg navbar-dark ae-navbar fixed-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <span class="brand-icon">✈</span>
+      <span class="fw-bold">Aero<span class="text-accent">Mentor</span></span>
+      <span class="badge bg-accent ms-1 small">GATE AE</span>
+    </a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <div id="streakBadge" class="streak-badge d-none d-sm-flex">
+        <i class="bi bi-fire"></i> <span id="streakCount">0</span> day streak
+      </div>
+      <div id="countdownBadge" class="countdown-badge d-none d-md-flex">
+        <i class="bi bi-clock"></i> <span id="daysLeft">--</span> days to GATE
+      </div>
+      <button class="btn btn-sm btn-outline-light" onclick="AeroApp.toggleTheme()">
+        <i class="bi bi-moon-stars" id="themeIcon"></i>
+      </button>
+      <button class="btn btn-sm ae-btn-accent" data-bs-toggle="modal" data-bs-target="#profileModal">
+        <i class="bi bi-person-circle"></i> Profile
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main Layout ──────────────────────────────────────────────────────── -->
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="ae-sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="AeroApp.showSection('chat')" data-section="chat">
+        <i class="bi bi-chat-dots-fill"></i><span>AI Chat</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('dashboard')" data-section="dashboard">
+        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('planner')" data-section="planner">
+        <i class="bi bi-calendar3"></i><span>Study Planner</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('quiz')" data-section="quiz">
+        <i class="bi bi-patch-question-fill"></i><span>Quiz</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('formulas')" data-section="formulas">
+        <i class="bi bi-calculator-fill"></i><span>Formulas</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('analytics')" data-section="analytics">
+        <i class="bi bi-bar-chart-fill"></i><span>Analytics</span>
+      </button>
+      <button class="nav-item" onclick="AeroApp.showSection('syllabus')" data-section="syllabus">
+        <i class="bi bi-book-fill"></i><span>Syllabus</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <small class="text-muted">Powered by IBM Granite</small>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="ae-main" id="mainContent">
+
+    <!-- ══════════════════ CHAT SECTION ══════════════════ -->
+    <section class="ae-section active" id="section-chat">
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="mentor-avatar"><span>🚀</span></div>
+            <div>
+              <div class="fw-bold">AeroMentor</div>
+              <div class="text-muted small">IBM Granite · GATE AE Expert</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline-secondary" onclick="AeroApp.clearChat()">
+            <i class="bi bi-trash3"></i> Clear
+          </button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message ai-message">
+            <div class="message-avatar">🚀</div>
+            <div class="message-bubble">
+              <p>Welcome to <strong>AeroMentor</strong>! I'm your personalized GATE Aerospace Engineering AI mentor, powered by IBM Granite.</p>
+              <p>I can help you with:</p>
+              <ul>
+                <li>🔭 Concept explanations with examples</li>
+                <li>📐 Step-by-step numerical solutions</li>
+                <li>📝 GATE-style MCQs &amp; quizzes</li>
+                <li>📅 Personalized study plans</li>
+                <li>📊 Formula sheets &amp; revision notes</li>
+              </ul>
+              <p>Set up your <strong>Profile</strong> first for a personalized experience. Then ask me anything!</p>
+              <p class="mb-0"><em>📌 Quick Tip: Start with your weakest subject — targeted practice there gives the highest score gains.</em></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-quick-actions">
+          <button class="quick-btn" onclick="AeroApp.sendQuick('Explain Prandtl-Lifting Line Theory for GATE')">Lifting Line Theory</button>
+          <button class="quick-btn" onclick="AeroApp.sendQuick('Solve a numerical on Hohmann transfer orbit')">Orbital Transfer</button>
+          <button class="quick-btn" onclick="AeroApp.sendQuick('Explain Boundary Layer separation with examples')">Boundary Layer</button>
+          <button class="quick-btn" onclick="AeroApp.sendQuick('What are the most important topics in Propulsion for GATE?')">Propulsion Tips</button>
+          <button class="quick-btn" onclick="AeroApp.sendQuick('Give me a step-by-step solution of a compressible flow problem with normal shocks')">Shock Waves</button>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="input-group">
+            <textarea id="chatInput" class="form-control" placeholder="Ask about any GATE AE topic, formula, or problem…" rows="1" onkeydown="AeroApp.handleKey(event)"></textarea>
+            <button class="btn ae-btn-accent" id="sendBtn" onclick="AeroApp.sendMessage()">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+          <div class="input-hint">Press Enter to send · Shift+Enter for new line</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ DASHBOARD SECTION ══════════════════ -->
+    <section class="ae-section" id="section-dashboard">
+      <div class="section-header">
+        <h2><i class="bi bi-speedometer2 text-accent"></i> Study Dashboard</h2>
+        <p class="text-muted">Your GATE AE preparation at a glance</p>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="dashStreak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value" id="dashHours">0</div>
+            <div class="stat-label">Hours Studied</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="dashQuizzes">0</div>
+            <div class="stat-label">Quizzes Done</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value" id="dashDays">--</div>
+            <div class="stat-label">Days to GATE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="ae-card">
+            <h5 class="card-title-ae"><i class="bi bi-bar-chart text-accent"></i> Subject Progress</h5>
+            <div class="subject-progress" id="subjectProgress"></div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="ae-card">
+            <h5 class="card-title-ae"><i class="bi bi-lightbulb text-accent"></i> Today's Motivation</h5>
+            <div class="motivation-card" id="motivationCard"></div>
+            <hr class="ae-divider">
+            <h6 class="mt-3">📋 Today's Goals</h6>
+            <ul class="goal-list" id="goalList">
+              <li>Set up your profile to get personalized daily goals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ STUDY PLANNER SECTION ══════════════════ -->
+    <section class="ae-section" id="section-planner">
+      <div class="section-header">
+        <h2><i class="bi bi-calendar3 text-accent"></i> Study Planner</h2>
+        <p class="text-muted">AI-generated personalized study plan</p>
+      </div>
+
+      <div class="ae-card mb-4">
+        <h5 class="card-title-ae">Generate Your Study Plan</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">GATE Exam Date</label>
+            <input type="date" id="planExamDate" class="form-control ae-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Daily Study Hours</label>
+            <input type="number" id="planDailyHours" class="form-control ae-input" value="4" min="1" max="16" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Preparation Level</label>
+            <select id="planLevel" class="form-select ae-input">
+              <option>Beginner</option>
+              <option selected>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Weak Subjects (Ctrl+click for multiple)</label>
+            <select id="planWeakSubjects" class="form-select ae-input" multiple size="4">
+              <option>Engineering Mathematics</option>
+              <option>Flight Mechanics</option>
+              <option>Aerodynamics</option>
+              <option>Propulsion</option>
+              <option>Space Dynamics</option>
+              <option>Aircraft Structures</option>
+              <option>Thermodynamics</option>
+              <option>Fluid Mechanics</option>
+              <option>Control Systems</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn ae-btn-accent" onclick="AeroApp.generateStudyPlan()">
+              <i class="bi bi-magic"></i> Generate AI Study Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ae-card" id="studyPlanOutput" style="display:none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title-ae mb-0"><i class="bi bi-journal-check text-accent"></i> Your Study Plan</h5>
+          <button class="btn btn-sm btn-outline-secondary" onclick="AeroApp.copyToClipboard('planContent')">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+        <div class="markdown-content" id="planContent"></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ QUIZ SECTION ══════════════════ -->
+    <section class="ae-section" id="section-quiz">
+      <div class="section-header">
+        <h2><i class="bi bi-patch-question-fill text-accent"></i> Quiz Generator</h2>
+        <p class="text-muted">GATE-level MCQs with detailed explanations</p>
+      </div>
+
+      <div class="ae-card mb-4">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Subject</label>
+            <select id="quizSubject" class="form-select ae-input">
+              <option>Aerodynamics</option>
+              <option>Propulsion</option>
+              <option>Flight Mechanics</option>
+              <option>Space Dynamics</option>
+              <option>Aircraft Structures</option>
+              <option>Engineering Mathematics</option>
+              <option>Thermodynamics</option>
+              <option>Fluid Mechanics</option>
+              <option>Control Systems</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Number of Questions</label>
+            <select id="quizCount" class="form-select ae-input">
+              <option value="3">3 questions</option>
+              <option value="5" selected>5 questions</option>
+              <option value="8">8 questions</option>
+              <option value="10">10 questions</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Difficulty</label>
+            <select id="quizDifficulty" class="form-select ae-input">
+              <option>Beginner</option>
+              <option selected>Intermediate</option>
+              <option>Advanced</option>
+              <option>GATE Level</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn ae-btn-accent" onclick="AeroApp.generateQuiz()">
+              <i class="bi bi-lightning-charge-fill"></i> Generate Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ae-card" id="quizOutput" style="display:none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title-ae mb-0" id="quizTitle">Quiz</h5>
+          <button class="btn btn-sm btn-outline-secondary" onclick="AeroApp.copyToClipboard('quizContent')">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+        <div class="markdown-content" id="quizContent"></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ FORMULA SHEET SECTION ══════════════════ -->
+    <section class="ae-section" id="section-formulas">
+      <div class="section-header">
+        <h2><i class="bi bi-calculator-fill text-accent"></i> Formula Sheets</h2>
+        <p class="text-muted">AI-generated subject-wise formula references</p>
+      </div>
+
+      <div class="ae-card mb-4">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Select Subject</label>
+            <select id="formulaSubject" class="form-select ae-input">
+              <option>Aerodynamics</option>
+              <option>Propulsion</option>
+              <option>Flight Mechanics</option>
+              <option>Space Dynamics</option>
+              <option>Aircraft Structures</option>
+              <option>Engineering Mathematics</option>
+              <option>Thermodynamics</option>
+              <option>Fluid Mechanics</option>
+              <option>Control Systems</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn ae-btn-accent" onclick="AeroApp.generateFormulaSheet()">
+              <i class="bi bi-file-earmark-text"></i> Generate Formula Sheet
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ae-card" id="formulaOutput" style="display:none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title-ae mb-0" id="formulaTitle">Formula Sheet</h5>
+          <button class="btn btn-sm btn-outline-secondary" onclick="AeroApp.copyToClipboard('formulaContent')">
+            <i class="bi bi-clipboard"></i> Copy
+          </button>
+        </div>
+        <div class="markdown-content" id="formulaContent"></div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ ANALYTICS SECTION ══════════════════ -->
+    <section class="ae-section" id="section-analytics">
+      <div class="section-header">
+        <h2><i class="bi bi-bar-chart-fill text-accent"></i> Performance Analytics</h2>
+        <p class="text-muted">Track your GATE preparation progress</p>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="ae-card">
+            <h5 class="card-title-ae"><i class="bi bi-pie-chart text-accent"></i> Subject Coverage</h5>
+            <canvas id="coverageChart" height="250"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="ae-card">
+            <h5 class="card-title-ae"><i class="bi bi-graph-up text-accent"></i> Study Hours Trend</h5>
+            <canvas id="hoursChart" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="ae-card">
+        <h5 class="card-title-ae"><i class="bi bi-trophy text-accent"></i> Update Quiz Scores</h5>
+        <p class="text-muted small">Enter your self-assessed score (0-100) for each subject to track progress.</p>
+        <div class="row g-3" id="scoreInputs"></div>
+        <button class="btn ae-btn-accent mt-3" onclick="AeroApp.saveScores()">
+          <i class="bi bi-save"></i> Save &amp; Update Charts
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════ SYLLABUS SECTION ══════════════════ -->
+    <section class="ae-section" id="section-syllabus">
+      <div class="section-header">
+        <h2><i class="bi bi-book-fill text-accent"></i> GATE AE Syllabus</h2>
+        <p class="text-muted">Complete topic-wise syllabus with AI explanations</p>
+      </div>
+      <div class="row g-3" id="syllabusGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── Profile Modal ─────────────────────────────────────────────────────── -->
+<div class="modal fade" id="profileModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content ae-modal">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-person-circle text-accent"></i> Student Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Your Name</label>
+            <input type="text" id="profileName" class="form-control ae-input" placeholder="e.g. Arjun Sharma" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">GATE Exam Date</label>
+            <input type="date" id="profileExamDate" class="form-control ae-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Daily Study Hours</label>
+            <input type="number" id="profileHours" class="form-control ae-input" value="4" min="1" max="16" />
+          </div>
+          <div class="col-12">
+            <label class="form-label">Preparation Level</label>
+            <select id="profileLevel" class="form-select ae-input">
+              <option>Beginner</option>
+              <option selected>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Weak Subjects (Ctrl+click for multiple)</label>
+            <select id="profileWeakSubjects" class="form-select ae-input" multiple size="5">
+              <option>Engineering Mathematics</option>
+              <option>Flight Mechanics</option>
+              <option>Aerodynamics</option>
+              <option>Propulsion</option>
+              <option>Space Dynamics</option>
+              <option>Aircraft Structures</option>
+              <option>Thermodynamics</option>
+              <option>Fluid Mechanics</option>
+              <option>Control Systems</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn ae-btn-accent" onclick="AeroApp.saveProfile()" data-bs-dismiss="modal">
+          <i class="bi bi-check-circle"></i> Save Profile
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ─────────────────────────────────────────────────────────────── -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="appToast" class="toast ae-toast" role="alert">
+    <div class="toast-body" id="toastMessage"></div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
