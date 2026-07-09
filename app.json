@@ -1,0 +1,26 @@
+{
+  "name": "AE GATE Mentor",
+  "description": "AI-powered GATE Aerospace Engineering Mentor using IBM watsonx.ai and Granite Models",
+  "repository": "https://github.com/YOUR_USERNAME/AE-GATE-Mentor",
+  "keywords": [
+    "python",
+    "flask",
+    "ibm",
+    "watsonx",
+    "granite",
+    "gate",
+    "aerospace",
+    "ai"
+  ],
+  "env": {
+    "IBM_API_KEY": {
+      "description": "IBM Cloud API Key"
+    },
+    "WATSONX_PROJECT_ID": {
+      "description": "IBM watsonx.ai Project ID"
+    },
+    "WATSONX_URL": {
+      "description": "IBM watsonx.ai URL"
+    }
+  }
+}
